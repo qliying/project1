@@ -25,3 +25,16 @@
 
 ## 三、部署环境
 CentOS Linux 7/8 云服务器
+
+## 四、可视化访问地址（公网可测）
+- Prometheus 指标查询后台：http://101.133.232.244:9090
+- Grafana 监控可视化大屏：http://101.133.232.244:3000（默认账号/密码：admin/admin）
+- Alertmanager 告警管理后台：http://101.133.232.244:9093
+
+### Grafana 使用说明：
+- 首次访问显示 Grafana 欢迎页为正常状态，左侧 Dashboards 菜单中可选择「Node Exporter Dashboard 20240520」查看服务器实时监控大屏；
+- 监控大屏包含 CPU 使用率、内存使用率、磁盘使用率、网络 IO、系统负载等核心指标，数据每 15 秒刷新一次（与 Prometheus 采集频率一致）。
+
+### Alertmanager 状态说明：
+当前 Alertmanager 显示 No alert groups found 属于**正常健康状态**，代表服务器 CPU、内存、磁盘均在安全阈值内，未触发任何告警。
+如需测试告警，可使用 stress 工具压测，1 分钟后即可收到邮件告警与页面告警信息。
