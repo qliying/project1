@@ -38,3 +38,43 @@ CentOS Linux 7/8 云服务器
 ### Alertmanager 状态说明：
 当前 Alertmanager 显示 No alert groups found 属于**正常健康状态**，代表服务器 CPU、内存、磁盘均在安全阈值内，未触发任何告警。
 如需测试告警，可使用 stress 工具压测，1 分钟后即可收到邮件告警与页面告警信息。
+
+## 五、完整部署步骤
+
+### 1. 系统初始化（关闭防火墙 + 依赖安装）
+systemctl stop firewalld
+systemctl disable firewalld
+setenforce 0
+sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+yum install wget vim net-tools -y
+mkdir -p /opt/monitor && cd /opt/monitor
+
+### 2. 安装 Node Exporter（指标采集 9100）
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
+tar -zxvf node_exporter-1.8.2.linux-amd64.tar.gz
+mv node_exporter-1.8.2.linux-amd64 node_exporter
+
+### 3. 安装 Prometheus（监控存储 9090）
+wget https://github.com/prometheus/prometheus/releases/download/v2.53.0/prometheus-2.53.0.linux-amd64.tar.gz
+tar -zxvf prometheus-2.53.0.linux-amd64.tar.gz
+mv prometheus-2.53.0.linux-amd64 prometheus
+
+### 4. 安装 Alertmanager（邮件告警 9093）
+wget https://github.com/prometheus/alertmanager/releases/download/v0.27.0/alertmanager-0.27.0.linux-amd64.tar.gz
+tar -zxvf alertmanager-0.27.0.linux-amd64.tar.gz
+mv alertmanager-0.27.0.linux-amd64 alertmanager
+
+### 5. 安装 Grafana（可视化大屏 3000）
+yum install fontconfig -y
+rpm -ivh --nodeps grafana-10.4.0-1.x86_64.rpm
+
+### 6. 启动所有服务
+systemctl start node_exporter
+systemctl start prometheus
+systemctl start alertmanager
+systemctl start grafana-server
+
+### 7. 访问可视化页面
+- Prometheus：http://101.133.232.244:9090
+- Grafana：http://101.133.232.244:3000
+- Alertmanager：http://101.133.232.244:9093
