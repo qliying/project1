@@ -1,0 +1,32 @@
+groups:
+- name: server_warn_rule
+  rules:
+  # 规则1：CPU使用率 > 80%告警
+  - alert: 服务器CPU过载
+    expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "⚠️云服务器CPU使用率过高"
+      description: "CPU使用率超过80%，当前值: {{ $value }}%"
+
+  # 规则2：真实可用内存<15%告警
+  - alert: 服务器内存不足
+    expr: (1 - node_memory_MemAvailable_bytes/node_memory_MemTotal_bytes)*100 > 85
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "⚠️云服务器内存使用率过高"
+      description: "可用内存低于15%，当前使用率: {{ $value }}%"
+
+  # 规则3：磁盘使用率 > 90%告警
+  - alert: 服务器磁盘将满
+    expr: (1 - node_filesystem_free_bytes{mountpoint="/"}/node_filesystem_size_bytes{mountpoint="/"})*100 > 90
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "⚠️云服务器磁盘空间不足"
+      description: "磁盘使用率超过90%，当前值: {{ $value }}%"
