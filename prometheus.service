@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus 监控服务
+After=network.target
+
+[Service]
+User=root
+ExecStart=/opt/monitor/prometheus/prometheus --config.file=/opt/monitor/prometheus/prometheus.yml
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
